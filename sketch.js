@@ -2,6 +2,7 @@ const Engine = Matter.Engine;
 const World= Matter.World;
 const Bodies = Matter.Bodies;
 const Constraint = Matter.Constraint;
+const Events = Matter.Events;
 
 var engine, world;
 var box1, pig1,pig3;
@@ -77,24 +78,31 @@ function draw(){
     bird.display();
     platform.display();
     //log6.display();
-    slingshot.display();    
+    slingshot.display();  
 }
 
 function mouseDragged(){
     //if (gameState!=="launched"){
-        Matter.Body.setPosition(bird.body, {x: mouseX , y: mouseY});
+        //Matter.Body.setPosition(bird.body, {x: mouseX , y: mouseY});
+        Events.on(engine, 'afterUpdate', function() {
+            Matter.Body.setPosition(bird.body, {x: mouseX , y: mouseY});
+});
+        
     //}
 }
 
 
 function mouseReleased(){
+    engine.events={};
     slingshot.fly();
     gameState = "launched";
 }
 
 function keyPressed(){
-    if(keyCode === 32){
+    if(keyCode === 32&&bird.body.speed<1){ 
+        Matter.Body.setPosition(bird.body,{x:200,y:50});
        slingshot.attach(bird.body);
+       bird.trajectory=[];
     }
 }
 
